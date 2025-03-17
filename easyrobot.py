@@ -77,6 +77,16 @@ def load_and_train():
 
 model, X_test, y_test = load_and_train()
 
+# 获取文件内容，指定编码为utf-8，避免UnicodeDecodeError
+def get_file_content(file_path):
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            return file.read()
+    except FileNotFoundError:
+        return ""  # 如果文件不存在，返回空字符串
+    except UnicodeDecodeError:
+        st.error("文件编码错误，无法解码文件。")
+        return None
 
 # GitHub相关函数
 def get_file_sha(file_path):
