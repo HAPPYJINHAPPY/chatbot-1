@@ -58,7 +58,7 @@ pose, hands = load_mediapipe_models()
 # GitHub配置
 GITHUB_TOKEN = st.secrets["GITHUB_TOKEN"]
 GITHUB_USERNAME = 'HAPPYJINHAPPY'
-GITHUB_REPO = 'blank-app'
+GITHUB_REPO = 'chatbot-1'
 GITHUB_BRANCH = 'main' 
 FILE_PATH = 'fatigue_data.csv'
 
