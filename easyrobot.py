@@ -20,6 +20,30 @@ import numpy as np
 from PIL import Image
 import gc
 
+# 界面配置
+font_path = "SourceHanSansCN-Normal.otf"
+# 检查字体文件是否存在
+if not os.path.exists(font_path):
+    st.error(f"Font file not found: {font_path}")
+else:
+    # 设置字体属性
+    font_prop = font_manager.FontProperties(fname=font_path)
+    font_name = font_prop.get_name()
+
+    # 创建自定义函数来统一设置字体
+    def set_font_properties(ax, font_prop):
+        """统一设置坐标轴和标题字体"""
+        for label in ax.get_xticklabels() + ax.get_yticklabels():
+            label.set_fontproperties(font_prop)
+            ax.title.set_fontproperties(font_prop)
+            ax.xaxis.label.set_fontproperties(font_prop)
+            ax.yaxis.label.set_fontproperties(font_prop)
+
+
+    # 全局设置字体
+    plt.rcParams['font.sans-serif'] = [font_name]
+    plt.rcParams['axes.unicode_minus'] = False
+
 # ⭐️ 1. 缓存媒体管道模型初始化
 @st.cache_resource
 def load_mediapipe_models():
@@ -113,30 +137,6 @@ def upload_to_github():
 # 辅助函数
 def calculate_score(answer):
     return {'请选择':0, '完全没有':1, '偶尔':2, '经常':3, '总是':4}.get(answer, 0)
-
-# 界面配置
-font_path = "SourceHanSansCN-Normal.otf"
-# 检查字体文件是否存在
-if not os.path.exists(font_path):
-    st.error(f"Font file not found: {font_path}")
-else:
-    # 设置字体属性
-    font_prop = font_manager.FontProperties(fname=font_path)
-    font_name = font_prop.get_name()
-
-    # 创建自定义函数来统一设置字体
-    def set_font_properties(ax, font_prop):
-        """统一设置坐标轴和标题字体"""
-        for label in ax.get_xticklabels() + ax.get_yticklabels():
-            label.set_fontproperties(font_prop)
-            ax.title.set_fontproperties(font_prop)
-            ax.xaxis.label.set_fontproperties(font_prop)
-            ax.yaxis.label.set_fontproperties(font_prop)
-
-
-    # 全局设置字体
-    plt.rcParams['font.sans-serif'] = [font_name]
-    plt.rcParams['axes.unicode_minus'] = False
 
 # Load the uploaded file
 file_path = 'corrected_fatigue_simulation_data_Chinese.csv'
