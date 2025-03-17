@@ -185,7 +185,6 @@ def upload_to_github(file_path):
 
         # 处理响应
         if response.status_code in (200, 201):
-            st.success("数据同步到 GitHub 成功！")
             return True
         else:
             error_msg = response.json().get('message', '未知错误')
