@@ -497,7 +497,7 @@ if submitted_eval:
         # 显示结果
         st.success(f"评估结果：{result}")
         save_to_csv(input_data, result, body_fatigue, cognitive_fatigue, emotional_fatigue)
-        
+        upload_to_github(FILE_PATH)
         # 添加结果到记录
         record = input_data.copy()
         record["评估结果"] = result
