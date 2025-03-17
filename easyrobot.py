@@ -14,11 +14,6 @@ import requests
 import datetime
 import io
 import pytz
-import cv2
-import mediapipe as mp
-import numpy as np
-from PIL import Image
-import gc
 
 # 界面配置
 font_path = "SourceHanSansCN-Normal.otf"
@@ -35,9 +30,9 @@ else:
         """统一设置坐标轴和标题字体"""
         for label in ax.get_xticklabels() + ax.get_yticklabels():
             label.set_fontproperties(font_prop)
-            ax.title.set_fontproperties(font_prop)
-            ax.xaxis.label.set_fontproperties(font_prop)
-            ax.yaxis.label.set_fontproperties(font_prop)
+        ax.title.set_fontproperties(font_prop)
+        ax.xaxis.label.set_fontproperties(font_prop)
+        ax.yaxis.label.set_fontproperties(font_prop)
 
 
     # 全局设置字体
@@ -93,7 +88,13 @@ def get_file_sha(file_path):
     url = f'https://api.github.com/repos/{GITHUB_USERNAME}/{GITHUB_REPO}/contents/{file_path}'
     headers = {'Authorization': f'token {GITHUB_TOKEN}'}
     response = requests.get(url, headers=headers)
-    return response.json()['sha'] if response.status_code == 200 else None
+
+    if response.status_code == 200:
+        file_info = response.json()
+        return file_info['sha']  # 返回SHA值
+    else:
+        st.warning(f"无法从 GitHub 获取文件: {response.json()}")
+        return None
 
 def save_to_csv(input_data, result, body_fatigue, cognitive_fatigue, emotional_fatigue):
     # 计算各问题的得分
@@ -492,15 +493,16 @@ if submitted_eval:
         result = fatigue_prediction(input_data)
         
         # 新增：将结果存入session_state
-        st.session_state.result = result  # 🚨 关键修复点
+        st.session_state.result = result  
         
         # 显示结果
         st.success(f"评估结果：{result}")
+        timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         save_to_csv(input_data, result, body_fatigue, cognitive_fatigue, emotional_fatigue)
         upload_to_github(FILE_PATH)
         # 添加结果到记录
         record = input_data.copy()
-        record["评估结果"] = result
+        record["评估"] = result
         st.session_state.predictions.append(record)
         
         # 重置 AI 分析相关的会话状态
