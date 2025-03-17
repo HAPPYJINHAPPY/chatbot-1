@@ -119,7 +119,7 @@ def upload_to_github():
     if os.path.exists(FILE_PATH):
         with open(FILE_PATH, 'rb') as f:
             content = base64.b64encode(f.read()).decode()
-            
+
         url = f'https://api.github.com/repos/{GITHUB_USERNAME}/{GITHUB_REPO}/contents/{FILE_PATH}'
         data = {
             "message": "Batch update fatigue data",
@@ -127,12 +127,17 @@ def upload_to_github():
             "content": content,
             "sha": get_file_sha(FILE_PATH)
         }
-        
+
         headers = {'Authorization': f'token {GITHUB_TOKEN}'}
         response = requests.put(url, json=data, headers=headers)
         return response.status_code == 200
-    return False
-
+    else:
+        # 创建文件（如果不存在）
+        file_dir = os.path.dirname(FILE_PATH)
+        if file_dir and not os.path.exists(file_dir):
+            os.makedirs(file_dir)
+        open(FILE_PATH, 'a').close()
+        return False
 
 # 辅助函数
 def calculate_score(answer):
