@@ -153,40 +153,48 @@ def save_to_csv(input_data, result, body_fatigue, cognitive_fatigue, emotional_f
     updated_df.to_csv(FILE_PATH, index=False)
 
 def upload_to_github(file_path):
-    # 获取文件的 SHA 值
-    sha_value = get_file_sha(file_path)
+    try:
+        # 获取 SHA（仅在文件存在时）
+        sha_value = get_file_sha(file_path)
+        
+        # 读取文件内容
+        with open(file_path, "rb") as f:
+            content = base64.b64encode(f.read()).decode()
 
-    # 读取 CSV 文件内容并进行 base64 编码
-    with open(file_path, 'rb') as file:
-        content = base64.b64encode(file.read()).decode()
+        # 构造请求数据（动态处理 SHA）
+        data = {
+            "message": "自动同步疲劳数据",
+            "content": content,
+            "branch": GITHUB_BRANCH
+        }
+        
+        # 仅当文件存在时才添加 SHA
+        if sha_value is not None:
+            data["sha"] = sha_value
 
-    # GitHub API 请求 URL
-    url = f'https://api.github.com/repos/{GITHUB_USERNAME}/{GITHUB_REPO}/contents/{file_path}'
+        # API 请求
+        headers = {
+            'Authorization': f'Bearer {GITHUB_TOKEN}',
+            'Accept': 'application/vnd.github.v3+json'
+        }
+        response = requests.put(
+            f'https://api.github.com/repos/{GITHUB_USERNAME}/{GITHUB_REPO}/contents/{FILE_PATH}',
+            json=data,
+            headers=headers
+        )
 
-    # 提交的信息
-    commit_message = "Add new fatigue data with timestamp"
-
-    data = {
-        "message": commit_message,
-        "branch": GITHUB_BRANCH,
-        "content": content,
-    }
-
-    # 如果文件已经存在，提供 sha 值
-    if sha_value:
-        data["sha"] = sha_value
-
-    headers = {
-        'Authorization': f'token {GITHUB_TOKEN}',
-        'Accept': 'application/vnd.github.v3+json',
-    }
-
-    response = requests.put(url, json=data, headers=headers)
-
-    # 输出详细错误信息
-    if response.status_code != 200 and response.status_code != 201:
-        st.error(f"Failed to upload CSV file to GitHub: {response.json()}")
-        print(f"GitHub API Response: {response.json()}")
+        # 处理响应
+        if response.status_code in (200, 201):
+            st.success("数据同步到 GitHub 成功！")
+            return True
+        else:
+            error_msg = response.json().get('message', '未知错误')
+            st.error(f"同步失败 ({response.status_code}): {error_msg}")
+            return False
+            
+    except Exception as e:
+        st.error(f"网络异常: {str(e)}")
+        return False
 
 # 辅助函数
 def calculate_score(answer):
