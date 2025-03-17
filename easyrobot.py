@@ -86,58 +86,96 @@ def get_file_sha(file_path):
     return response.json()['sha'] if response.status_code == 200 else None
 
 def save_to_csv(input_data, result, body_fatigue, cognitive_fatigue, emotional_fatigue):
-    body_score = calculate_score(body_fatigue)
-    cognitive_score = calculate_score(cognitive_fatigue)
-    emotional_score = calculate_score(emotional_fatigue)
-    
+    # 计算各问题的得分
+    body_fatigue_score = calculate_score(body_fatigue)
+    cognitive_fatigue_score = calculate_score(cognitive_fatigue)
+    emotional_fatigue_score = calculate_score(emotional_fatigue)
+
+    # 获取当前时间戳
     tz = pytz.timezone('Asia/Shanghai')
     timestamp = datetime.datetime.now(tz).strftime('%Y-%m-%d %H:%M:%S')
-    
+
+    # 数据字典，包括评分和其他输入
     data = {
-        "颈部前屈": input_data["颈部前屈"].values[0],
-        "颈部后仰": input_data["颈部后仰"].values[0],
-        "肩部上举范围": input_data["肩部上举范围"].values[0],
-        "肩部前伸范围": input_data["肩部前伸范围"].values[0],
-        "肘部屈伸": input_data["肘部屈伸"].values[0],
-        "手腕背伸": input_data["手腕背伸"].values[0],
-        "手腕桡偏/尺偏": input_data["手腕桡偏/尺偏"].values[0],
-        "背部屈曲范围": input_data["背部屈曲范围"].values[0],
-        "持续时间": input_data["持续时间"].values[0],
-        "重复频率": input_data["重复频率"].values[0],
+        "颈部前屈": int(input_data["颈部前屈"].values[0]),
+        "颈部后仰": int(input_data["颈部后仰"].values[0]),
+        "肩部上举范围": int(input_data["肩部上举范围"].values[0]),
+        "肩部前伸范围": int(input_data["肩部前伸范围"].values[0]),
+        "肘部屈伸": int(input_data["肘部屈伸"].values[0]),
+        "手腕背伸": int(input_data["手腕背伸"].values[0]),
+        "手腕桡偏/尺偏": int(input_data["手腕桡偏/尺偏"].values[0]),
+        "背部屈曲范围": int(input_data["背部屈曲范围"].values[0]),
+        "持续时间": int(input_data["持续时间"].values[0]),
+        "重复频率": int(input_data["重复频率"].values[0]),
         "fatigue_result": result,
-        "body_fatigue_score": body_score,
-        "cognitive_fatigue_score": cognitive_score,
-        "emotional_fatigue_score": emotional_score,
-        "timestamp": timestamp
+        "body_fatigue_score": body_fatigue_score,  # 添加评分
+        "cognitive_fatigue_score": cognitive_fatigue_score,  # 添加评分
+        "emotional_fatigue_score": emotional_fatigue_score,  # 添加评分
+        "timestamp": timestamp  # 增加时间戳
     }
-    
     df = pd.DataFrame([data])
-    df.to_csv(FILE_PATH, mode='a', header=not os.path.exists(FILE_PATH), index=False)
 
-# ⭐️ 4. 批量提交功能
-def upload_to_github():
+    # 检查文件是否存在
     if os.path.exists(FILE_PATH):
-        with open(FILE_PATH, 'rb') as f:
-            content = base64.b64encode(f.read()).decode()
+        existing_content = get_file_content(FILE_PATH)
 
-        url = f'https://api.github.com/repos/{GITHUB_USERNAME}/{GITHUB_REPO}/contents/{FILE_PATH}'
-        data = {
-            "message": "Batch update fatigue data",
-            "branch": GITHUB_BRANCH,
-            "content": content,
-            "sha": get_file_sha(FILE_PATH)
-        }
-
-        headers = {'Authorization': f'token {GITHUB_TOKEN}'}
-        response = requests.put(url, json=data, headers=headers)
-        return response.status_code == 200
+        # 如果文件内容非空，读取数据
+        if existing_content and existing_content.strip():
+            existing_df = pd.read_csv(io.StringIO(existing_content))
+        else:
+            # 如果文件为空，初始化空的 DataFrame
+            existing_df = pd.DataFrame(
+                columns=['timestamp', '颈部前屈', '颈部后仰', '肩部上举范围', '肩部前伸范围', '肘部屈伸', '手腕背伸',
+                         '手腕桡偏/尺偏', '背部屈曲范围', '持续时间', '重复频率', 'fatigue_result',
+                         'body_fatigue_score', 'cognitive_fatigue_score', 'emotional_fatigue_score'])
     else:
-        # 创建文件（如果不存在）
-        file_dir = os.path.dirname(FILE_PATH)
-        if file_dir and not os.path.exists(file_dir):
-            os.makedirs(file_dir)
-        open(FILE_PATH, 'a').close()
-        return False
+        # 文件不存在，初始化空的 DataFrame
+        existing_df = pd.DataFrame(
+            columns=['timestamp', '颈部前屈', '颈部后仰', '肩部上举范围', '肩部前伸范围', '肘部屈伸', '手腕背伸',
+                     '手腕桡偏/尺偏', '背部屈曲范围', '持续时间', '重复频率', 'fatigue_result', 'body_fatigue_score',
+                     'cognitive_fatigue_score', 'emotional_fatigue_score'])
+
+    # 合并现有的 DataFrame 和新数据
+    updated_df = pd.concat([existing_df, df], ignore_index=True)
+
+    # 保存更新后的 DataFrame 到 CSV 文件
+    updated_df.to_csv(FILE_PATH, index=False)
+
+def upload_to_github(file_path):
+    # 获取文件的 SHA 值
+    sha_value = get_file_sha(file_path)
+
+    # 读取 CSV 文件内容并进行 base64 编码
+    with open(file_path, 'rb') as file:
+        content = base64.b64encode(file.read()).decode()
+
+    # GitHub API 请求 URL
+    url = f'https://api.github.com/repos/{GITHUB_USERNAME}/{GITHUB_REPO}/contents/{file_path}'
+
+    # 提交的信息
+    commit_message = "Add new fatigue data with timestamp"
+
+    data = {
+        "message": commit_message,
+        "branch": GITHUB_BRANCH,
+        "content": content,
+    }
+
+    # 如果文件已经存在，提供 sha 值
+    if sha_value:
+        data["sha"] = sha_value
+
+    headers = {
+        'Authorization': f'token {GITHUB_TOKEN}',
+        'Accept': 'application/vnd.github.v3+json',
+    }
+
+    response = requests.put(url, json=data, headers=headers)
+
+    # 输出详细错误信息
+    if response.status_code != 200 and response.status_code != 201:
+        st.error(f"Failed to upload CSV file to GitHub: {response.json()}")
+        print(f"GitHub API Response: {response.json()}")
 
 # 辅助函数
 def calculate_score(answer):
