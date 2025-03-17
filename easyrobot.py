@@ -124,15 +124,14 @@ else:
     font_prop = font_manager.FontProperties(fname=font_path)
     font_name = font_prop.get_name()
 
-
     # 创建自定义函数来统一设置字体
     def set_font_properties(ax, font_prop):
         """统一设置坐标轴和标题字体"""
         for label in ax.get_xticklabels() + ax.get_yticklabels():
             label.set_fontproperties(font_prop)
-        ax.title.set_fontproperties(font_prop)
-        ax.xaxis.label.set_fontproperties(font_prop)
-        ax.yaxis.label.set_fontproperties(font_prop)
+            ax.title.set_fontproperties(font_prop)
+            ax.xaxis.label.set_fontproperties(font_prop)
+            ax.yaxis.label.set_fontproperties(font_prop)
 
 
     # 全局设置字体
