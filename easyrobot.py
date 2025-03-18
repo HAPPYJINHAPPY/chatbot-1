@@ -40,19 +40,6 @@ else:
     plt.rcParams['font.sans-serif'] = [font_name]
     plt.rcParams['axes.unicode_minus'] = False
 
-
-# ⭐️ 1. 缓存媒体管道模型初始化
-@st.cache_resource
-def load_mediapipe_models():
-    mp_pose = mp.solutions.pose
-    mp_hands = mp.solutions.hands
-    pose = mp_pose.Pose(min_detection_confidence=0.8, min_tracking_confidence=0.8)
-    hands = mp_hands.Hands(min_detection_confidence=0.7, min_tracking_confidence=0.7)
-    return pose, hands
-
-
-pose, hands = load_mediapipe_models()
-
 # GitHub配置
 GITHUB_TOKEN = st.secrets["GITHUB_TOKEN"]
 GITHUB_USERNAME = 'HAPPYJINHAPPY'
