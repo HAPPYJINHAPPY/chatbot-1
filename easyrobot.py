@@ -523,7 +523,7 @@ def call_ark_api(client, messages):
     try:
         ark_messages = [{"role": msg["role"], "content": msg["content"]} for msg in messages]
         completion = client.chat.completions.create(
-            model="deepseek-ai/DeepSeek-R1-Distill-Qwen-7B",
+            model="deepseek-ai/DeepSeek-V2.5",
             messages=ark_messages,
             stream=True
         )
