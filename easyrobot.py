@@ -538,7 +538,7 @@ def call_ark_api(client, messages):
 
 # 显示所有保存的预测记录
 if st.session_state.predictions:
-    st.subheader("所有评估记录")
+    st.subheader("All assessment records")
     # 将所有记录合并成一个大DataFrame
     prediction_df = pd.concat(st.session_state.predictions, ignore_index=True)
     st.write(prediction_df)
@@ -564,25 +564,25 @@ if submitted_ai:
         if "result" not in st.session_state:
             st.warning("请先点击“评估”按钮进行疲劳评估！")
         else:
-            st.subheader("AI 分析")
+            st.subheader("AI Analytics")
             st.info("生成潜在人因危害分析及改善建议：")
             if st.session_state.ai_analysis_result is None:
                 try:
                     # 构造 AI 输入
-                    ai_input = f"用户目前{body_fatigue}身体感到无力，{cognitive_fatigue}影响睡眠，{emotional_fatigue}肌肉酸痛或不适。\n" \
-                               f"用户提供的角度数据为：颈部前屈{neck_flexion}度，颈部后仰{neck_extension}度，" \
-                               f"肩部上举范围{shoulder_elevation}度，肩部前伸范围{shoulder_forward}度，" \
-                               f"肘部屈伸{elbow_flexion}度，手腕背伸{wrist_extension}度，" \
-                               f"手腕桡偏/尺偏{wrist_deviation}度，背部屈曲范围{back_flexion}度。\n" \
-                               f"请判断用户的疲劳程度，基于数据进行用户潜在人因危害分析并提供改善建议，如果需要改善的话需要优先改善哪些位置。"
+                    ai_input = f “The user is currently {body_fatigue} feeling physically weak, {cognitive_fatigue} interfering with sleep, and {emotional_fatigue} experiencing muscle soreness or discomfort. \n"\
+                               f “The angle data provided by the user is: neck forward flexion {neck_flexion} degrees, neck backward tilt {neck_extension} degrees,” \n
+                               f “Shoulder elevation range {shoulder_elevation} degrees, shoulder forward range {shoulder_forward} degrees,” \
+                               f “elbow flexion and extension {elbow_flexion} degrees, wrist dorsal extension {wrist_extension} degrees,” \
+                               f “wrist radial/ulnar deviation {wrist_deviation} degrees, back flexion range {back_flexion} degrees. \n” \
+                               f “Please determine the user's fatigue level, perform a user's potential human-caused hazard analysis based on the data and provide recommendations for improvement, and prioritize which positions need to be improved, if any.”
 
                     st.session_state.messages = [
                         {"role": "system",
-                         "content": "你是一个人因工程专家，请根据国际人因标准对用户的疲劳状态和工作最大角度数据提供建议。回答简洁但需要描述清晰有依据。"},
+                         "content": "You are a human factors engineering expert, please provide recommendations based on international human factors standards for user fatigue status and work maximum angle data. Answers are concise but need to be clearly described and substantiated。"},
                         {"role": "user", "content": ai_input}
                     ]
 
-                    with st.spinner("正在进行 AI 分析，请稍等..."):
+                    with st.spinner("AI analysis in progress, please wait..."):
                         response = ""
                         for partial_response in call_ark_api(st.session_state.client, st.session_state.messages):
                             if "Error" in partial_response:
@@ -618,7 +618,7 @@ if st.session_state.get("messages") and st.session_state.get("api_key_entered", 
         st.session_state.messages.append(system_message)
 
     # 获取用户输入的问题
-    prompt = st.chat_input("请输入您的问题:")
+    prompt = st.chat_input("Please enter your question:")
     if prompt:
         # 用户输入的问题
         st.session_state.messages.append({"role": "user", "content": prompt})
