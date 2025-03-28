@@ -569,12 +569,12 @@ if submitted_ai:
             if st.session_state.ai_analysis_result is None:
                 try:
                     # 构造 AI 输入
-                    ai_input = f “The user is currently {body_fatigue} feeling physically weak, {cognitive_fatigue} interfering with sleep, and {emotional_fatigue} experiencing muscle soreness or discomfort. \n"\
-                               f “The angle data provided by the user is: neck forward flexion {neck_flexion} degrees, neck backward tilt {neck_extension} degrees,” \n
-                               f “Shoulder elevation range {shoulder_elevation} degrees, shoulder forward range {shoulder_forward} degrees,” \
-                               f “elbow flexion and extension {elbow_flexion} degrees, wrist dorsal extension {wrist_extension} degrees,” \
-                               f “wrist radial/ulnar deviation {wrist_deviation} degrees, back flexion range {back_flexion} degrees. \n” \
-                               f “Please determine the user's fatigue level, perform a user's potential human-caused hazard analysis based on the data and provide recommendations for improvement, and prioritize which positions need to be improved, if any.”
+                    ai_input = f "The user is currently {body_fatigue} feeling physically weak, {cognitive_fatigue} interfering with sleep, and {emotional_fatigue} experiencing muscle soreness or discomfort. \n"\
+                               f "The angle data provided by the user is: neck forward flexion {neck_flexion} degrees, neck backward tilt {neck_extension} degrees," \n
+                               f "Shoulder elevation range {shoulder_elevation} degrees, shoulder forward range {shoulder_forward} degrees," \
+                               f "elbow flexion and extension {elbow_flexion} degrees, wrist dorsal extension {wrist_extension} degrees," \
+                               f "wrist radial/ulnar deviation {wrist_deviation} degrees, back flexion range {back_flexion} degrees. \n" \
+                               f "Please determine the user's fatigue level, perform a user's potential human-caused hazard analysis based on the data and provide recommendations for improvement, and prioritize which positions need to be improved, if any."
 
                     st.session_state.messages = [
                         {"role": "system",
