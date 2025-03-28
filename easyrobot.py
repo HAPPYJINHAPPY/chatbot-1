@@ -404,6 +404,7 @@ if st.sidebar.checkbox("标准参考"):
 
     <div class="footer">通过遵循以上建议，您可以有效减少肌肉骨骼疾病的风险，提升工作效率和舒适度。</div>
     """, unsafe_allow_html=True)
+st.sidebar.checkbox("关节测量"):
 
 # 初始化会话状态
 if "show_ai_analysis" not in st.session_state:
