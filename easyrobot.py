@@ -475,7 +475,7 @@ with st.form("main_form"):
 
     # 垂直排列按钮
     submitted_eval = st.form_submit_button("🚀 satrt the assessment", use_container_width=True)
-    submitted_ai = st.form_submit_button("🤖 AI analytics", use_container_width=True)
+    submitted_ai = st.form_submit_button("🤖 AI Analysis", use_container_width=True)
 
 # 将评估逻辑移出表单，仅在点击时执行
 if submitted_eval:
@@ -564,8 +564,7 @@ if submitted_ai:
         if "result" not in st.session_state:
             st.warning("请先点击“评估”按钮进行疲劳评估！")
         else:
-            st.subheader("AI Analytics")
-            st.info("生成潜在人因危害分析及改善建议：")
+            st.subheader("AI Analysis")
             if st.session_state.ai_analysis_result is None:
                 try:
                     # 构造 AI 输入
