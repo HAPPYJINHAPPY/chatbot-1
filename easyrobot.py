@@ -420,62 +420,62 @@ if 'client' not in st.session_state:
 
 def fatigue_prediction(input_data):
     prediction = model.predict(input_data)
-    return ["低疲劳状态", "中疲劳状态", "高疲劳状态"][prediction[0]]
+    return ["low-fatigue state", "中疲劳状态", "高疲劳状态"][prediction[0]]
 
 
 # 使用 Markdown 居中标题
-st.markdown("<h1 style='text-align: center;'>疲劳评估测试系统</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>Fatigue Assessment Test System</h1>", unsafe_allow_html=True)
 st.markdown(
-    """该工具依据国际标准ISO 11226（静态工作姿势）、美国国家职业安全健康研究所的《手动材料处理指南》以及OWAS分析与建议等多套国际标准和规范，对工作过程中的疲劳状态进行科学评估。""")
+    """The tool provides a scientific assessment of fatigue during work in accordance with several sets of international standards and norms, including the international standard ISO 11226 (static working posture), the National Institute for Occupational Safety and Health's Guidelines for Manual Material Handling, and OWAS Analysis and Recommendations.""")
 
 # 初始化存储所有预测记录的列表
 if 'predictions' not in st.session_state:
     st.session_state.predictions = []
 with st.form("main_form"):
-    st.subheader("角度参数")
+    st.subheader("Angle parameters")
     col1, col2 = st.columns(2)
     with col1:
-        neck_flexion = st.slider("颈部前屈", 0, 60, 20)
-        neck_extension = st.slider("颈部后仰", 0, 60, 25)
-        shoulder_elevation = st.slider("肩部上举范围", 0, 180, 60)
-        shoulder_forward = st.slider("肩部前伸范围", 0, 180, 120)
+        neck_flexion = st.slider("neck_flexion", 0, 60, 20)
+        neck_extension = st.slider("neck_extension", 0, 60, 25)
+        shoulder_elevation = st.slider("shoulder_elevation", 0, 180, 60)
+        shoulder_forward = st.slider("shoulder_forward", 0, 180, 120)
     with col2:
-        elbow_flexion = st.slider("肘部屈伸", 0, 180, 120)
-        wrist_extension = st.slider("手腕背伸", 0, 60, 15)
-        wrist_deviation = st.slider("手腕桡偏/尺偏", 0, 30, 10)
-        back_flexion = st.slider("背部屈曲范围", 0, 60, 20)
+        elbow_flexion = st.slider("elbow_flexion", 0, 180, 120)
+        wrist_extension = st.slider("wrist_extension", 0, 60, 15)
+        wrist_deviation = st.slider("wrist_deviation", 0, 30, 10)
+        back_flexion = st.slider("back_flexion", 0, 60, 20)
 
-    st.subheader("时间参数")
+    st.subheader("Time parameters")
     col3, col4 = st.columns(2)
     with col3:
-        task_duration = st.number_input("持续时间（秒）", min_value=0, value=5)
+        task_duration = st.number_input("Duration (seconds)", min_value=0, value=5)
     with col4:
-        movement_frequency = st.number_input("重复频率（每5分钟）", min_value=0, value=35)
+        movement_frequency = st.number_input("Repetition rate (every 5 minutes)", min_value=0, value=35)
 
-    st.subheader("主观感受")
+    st.subheader("Subjective feelings")
     col5, col6, col7 = st.columns(3)
     with col5:
         body_fatigue = st.selectbox(
-            "1. 身体感到无力",
-            ['请选择', '完全没有', '偶尔', '经常', '总是'],
+            "1. Subjective feelings",
+            ['please selecte', 'Not at all', '偶尔', '经常', '总是'],
             index=0
         )
     with col6:
         cognitive_fatigue = st.selectbox(
-            "2. 影响睡眠",
-            ['请选择', '完全没有', '偶尔', '经常', '总是'],
+            "2. Affects sleep",
+            ['请选择', 'Not at all', '偶尔', '经常', '总是'],
             index=0
         )
     with col7:
         emotional_fatigue = st.selectbox(
-            "3. 肌肉酸痛或不适",
-            ['请选择', '完全没有', '偶尔', '经常', '总是'],
+            "3. Muscle aches or discomfort",
+            ['请选择', 'Not at all', '偶尔', '经常', '总是'],
             index=0
         )
 
     # 垂直排列按钮
-    submitted_eval = st.form_submit_button("🚀 开始评估", use_container_width=True)
-    submitted_ai = st.form_submit_button("🤖 AI分析", use_container_width=True)
+    submitted_eval = st.form_submit_button("🚀 satrt the assessment", use_container_width=True)
+    submitted_ai = st.form_submit_button("🤖 AI analytics", use_container_width=True)
 
 # 将评估逻辑移出表单，仅在点击时执行
 if submitted_eval:
