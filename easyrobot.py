@@ -424,7 +424,7 @@ def fatigue_prediction(input_data):
 
 
 # 使用 Markdown 居中标题
-st.markdown("<h1 style='text-align: center;'>Fatigue Assessment Test System</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center;'>Fatigue Assessment System</h1>", unsafe_allow_html=True)
 st.markdown(
     """The tool provides a scientific assessment of fatigue during work in accordance with several sets of international standards and norms, including the international standard ISO 11226 (static working posture), the National Institute for Occupational Safety and Health's Guidelines for Manual Material Handling, and OWAS Analysis and Recommendations.""")
 
