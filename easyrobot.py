@@ -457,19 +457,19 @@ with st.form("main_form"):
     with col5:
         body_fatigue = st.selectbox(
             "1. Subjective feelings",
-            ['please selecte', 'Not at all', '偶尔', '经常', '总是'],
+            ['please select', 'Not at all', 'occasionally', 'often', 'always'],
             index=0
         )
     with col6:
         cognitive_fatigue = st.selectbox(
             "2. Affects sleep",
-            ['请选择', 'Not at all', '偶尔', '经常', '总是'],
+            ['please select', 'Not at all', 'occasionally', 'often', 'always'],
             index=0
         )
     with col7:
         emotional_fatigue = st.selectbox(
             "3. Muscle aches or discomfort",
-            ['请选择', 'Not at all', '偶尔', '经常', '总是'],
+            ['please select', 'Not at all', 'occasionally', 'often', 'always'],
             index=0
         )
 
@@ -494,7 +494,7 @@ if submitted_eval:
     })
 
     # 执行评估逻辑
-    if body_fatigue != '请选择' and cognitive_fatigue != '请选择' and emotional_fatigue != '请选择':
+    if body_fatigue != 'please select' and cognitive_fatigue != 'please select' and emotional_fatigue != 'please select':
         score = calculate_score(body_fatigue) + calculate_score(cognitive_fatigue) + calculate_score(emotional_fatigue)
         result = fatigue_prediction(input_data)
 
@@ -502,7 +502,7 @@ if submitted_eval:
         st.session_state.result = result
 
         # 显示结果
-        st.success(f"评估结果：{result}")
+        st.success(f"{result}")
         timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         save_to_csv(input_data, result, body_fatigue, cognitive_fatigue, emotional_fatigue)
         upload_to_github(FILE_PATH)
@@ -516,7 +516,7 @@ if submitted_eval:
         st.session_state.messages = []
         st.session_state.show_ai_analysis = True
     else:
-        st.warning("请完成所有主观感受的选择！")
+        st.warning("Please complete all subjective feeling choices！")
 
 
 def call_ark_api(client, messages):
